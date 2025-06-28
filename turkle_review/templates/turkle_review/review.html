@@ -1,0 +1,76 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block extrahead %}
+{{ block.super }}
+<script type="text/javascript" src="{% static 'turkle/jquery-3.3.1.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'turkle/datatables/datatables.min.js' %}"></script>
+<link href="{% static 'turkle/datatables/datatables.bootstrap4.min.css' %}" rel="stylesheet" type="text/css"/>
+<script>
+  $(document).ready(function() {
+    $('#results-table').DataTable({
+      info: false,
+      paging: false,
+      searching: false
+    });
+  });
+</script>
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+<a href="{% url 'admin:index' %}">Home</a>
+&rsaquo; <a href="{% url 'admin:app_list' app_label='turkle' %}">Turkle</a>
+&rsaquo; <a href="{% url 'admin:turkle_batch_changelist' %}">Batches</a>
+&rsaquo; Review
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="module">
+  <table>
+    <tr>
+      <th>Project Name</th>
+      <td>{{ batch.project.name }}</td>
+    </tr>
+    <tr>
+      <th>Batch Name</th>
+      <td>{{ batch.name }}</td>
+    </tr>
+    <tr>
+      <th>Assignments per Task</th>
+      <td>{{ batch.assignments_per_task }}</td>
+    </tr>
+    <tr>
+      <th>Tasks Completed</th>
+      <td>{{ batch.total_finished_tasks }} / {{ batch.total_tasks }}</td>
+    </tr>
+    <tr>
+      <th>Task Assignments Completed</th>
+      <td>{{ batch.total_finished_task_assignments }} / {{ batch.total_task_assignments }}</td>
+    </tr>
+  </table>
+</div>
+
+<div>
+  <table id="results-table">
+    <thead>
+      <tr>
+        {% for name in field_names %}
+          <th>{{ name }}</th>
+        {% endfor %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in rows %}
+        <tr>
+          {% for entry in row %}
+            <td>{{ entry }}</td>
+          {% endfor %}
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endblock %}
