@@ -15,7 +15,7 @@ def process_batch_data(field_names, rows):
         elif name.startswith("Answer."):
             keys.append(name)
             header.append(name[len("Answer."):])
-    rows = [[row[key] for key in keys] for row in rows]
+    rows = [[row[key] if key in row else "N/A" for key in keys] for row in rows]
     return header, rows
 
 @staff_member_required
