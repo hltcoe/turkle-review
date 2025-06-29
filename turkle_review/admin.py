@@ -14,7 +14,7 @@ class ReviewBatchAdmin(OriginalBatchAdmin):
         original_urls = super().get_urls()
         custom_urls = [
             path(
-                '<int:batch_id>/review/',
+                '<int:batch_id>/review_results/',
                 self.admin_site.admin_view(review_batch_view),
                 name='batch-review'
             ),
