@@ -16,14 +16,25 @@ def process_batch_data(field_names, rows):
             keys.append(name)
             header.append(name[len("Answer."):])
     rows = [[row[key] if key in row else "N/A" for key in keys] for row in rows]
-    return header, rows
+
+    # we will guess that if the first row has json, every row has json
+    if rows:
+        # 0-based indexes of which columns look like json
+        json_columns = [
+            i for i, entry in enumerate(rows[0])
+            if isinstance(entry, str) and entry.startswith("{") and entry.endswith("}")
+        ]
+    else:
+        json_columns = []
+
+    return header, rows, json_columns
 
 @staff_member_required
 def review_batch_view(request, batch_id):
     batch = get_object_or_404(Batch, pk=batch_id)
 
     fieldnames, rows = batch._results_data(batch.task_set.all())
-    fieldnames, rows = process_batch_data(fieldnames, rows)
+    fieldnames, rows, json_columns = process_batch_data(fieldnames, rows)
 
     context = admin.site.each_context(request)
     context['title'] = f'Review for Batch: {batch.name}'
@@ -31,6 +42,7 @@ def review_batch_view(request, batch_id):
         'batch': batch,
         'field_names': fieldnames,
         'rows': rows,
+        'json_columns': json_columns,
     })
 
     return render(request, 'turkle_review/review.html', context)
