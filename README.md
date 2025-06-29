@@ -15,3 +15,5 @@ Then add this as an app in local_settings.py:
 INSTALLED_APPS.append('turkle_review')
 ```
 Your IDE will complain about this line but it works.
+
+Finally, you will need to restart the webserver.
